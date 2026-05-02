@@ -33,7 +33,7 @@ const venerablesExtendedData: Record<string, { teachings: string[]; schedule?: s
       "Chan meditation techniques and wisdom teachings",
       "Compassion practices and loving-kindness in daily life",
     ],
-    schedule: "Weekly meditation sessions at Queens Buddhist Temple, Dharma talks monthly",
+    schedule: "Weekly meditation sessions at Bangladesh Buddhist Vihara Of New York, Dharma talks monthly",
   },
   "venerable-monindra-bangsha-bhikkhu": {
     teachings: [
@@ -51,7 +51,7 @@ const venerablesExtendedData: Record<string, { teachings: string[]; schedule?: s
       "Monastic discipline and Vinaya",
       "Community support and spiritual guidance",
     ],
-    schedule: "Available for guidance at Queens Buddhist Temple throughout the week",
+    schedule: "Available for guidance at Bangladesh Buddhist Vihara Of New York throughout the week",
   },
   "venerable-ajahn-somchai": {
     teachings: [
