@@ -1,13 +1,83 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+// Play a single bell tone into a given AudioContext
+const playBell = (
+  ctx: AudioContext,
+  freq: number,
+  startTime: number,
+  volume: number,
+  decaySeconds: number
+) => {
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const shimmerGain = ctx.createGain();
+
+  osc1.type = "sine";
+  osc1.frequency.value = freq;
+  osc2.type = "sine";
+  osc2.frequency.value = freq * 2.756; // inharmonic partial for bowl shimmer
+  shimmerGain.gain.value = 0.12;
+
+  osc1.connect(gain);
+  osc2.connect(shimmerGain);
+  shimmerGain.connect(gain);
+  gain.connect(ctx.destination);
+
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(volume, startTime + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + decaySeconds);
+
+  osc1.start(startTime);
+  osc1.stop(startTime + decaySeconds);
+  osc2.start(startTime);
+  osc2.stop(startTime + decaySeconds);
+};
 
 // Meditation timer component
 const MeditationTimer = () => {
   const [isRunning, setIsRunning] = useState(false);
-  const [time, setTime] = useState(10 * 60); // 10 minutes in seconds
+  const [time, setTime] = useState(10 * 60);
   const [selectedDuration, setSelectedDuration] = useState(10);
+  const [message, setMessage] = useState<string | null>(null);
+  // Keep one AudioContext alive so sounds work even from useEffect
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const getCtx = () => {
+    if (!audioCtxRef.current) {
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      audioCtxRef.current = new Ctx();
+    }
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  };
+
+  const playCompletionSound = () => {
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+      // D4 → A4 → D5 → A5 → D6 — ascending triumphant cascade
+      playBell(ctx, 294, now + 0.0, 0.45, 4.0);
+      playBell(ctx, 440, now + 0.5, 0.38, 3.5);
+      playBell(ctx, 587, now + 1.0, 0.32, 3.0);
+      playBell(ctx, 880, now + 1.5, 0.26, 2.5);
+      playBell(ctx, 1175, now + 2.0, 0.20, 2.0);
+    } catch (_) {}
+  };
+
+  const playEncouragementSound = () => {
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+      playBell(ctx, 392, now + 0.0, 0.30, 2.2); // G4
+      playBell(ctx, 523, now + 0.4, 0.24, 1.8); // C5
+    } catch (_) {}
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -17,11 +87,13 @@ const MeditationTimer = () => {
       }, 1000);
     } else if (time === 0) {
       setIsRunning(false);
-      // You could add a bell sound here
+      playCompletionSound();
+      setMessage("🎉 We made it! Congratulations on completing your session.");
     }
     return () => {
       if (interval) clearInterval(interval);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, time]);
 
   const formatTime = (seconds: number) => {
@@ -34,11 +106,25 @@ const MeditationTimer = () => {
     setSelectedDuration(minutes);
     setTime(minutes * 60);
     setIsRunning(false);
+    setMessage(null);
   };
 
   const handleReset = () => {
     setTime(selectedDuration * 60);
     setIsRunning(false);
+    setMessage(null);
+  };
+
+  const handleStartPause = () => {
+    if (isRunning) {
+      playEncouragementSound();
+      setMessage("✨ We are close — keep going, you're doing great!");
+    } else {
+      // Warm up AudioContext on Start click (required by browser autoplay policy)
+      getCtx();
+      setMessage(null);
+    }
+    setIsRunning((prev) => !prev);
   };
 
   return (
@@ -52,8 +138,18 @@ const MeditationTimer = () => {
         <div className="text-6xl sm:text-7xl font-light text-primary-dark mb-4 font-mono">
           {formatTime(time)}
         </div>
-        {time === 0 && (
-          <p className="text-lg text-neutral-600">Session complete</p>
+
+        {/* Sound message */}
+        {message && (
+          <p
+            className="text-base font-medium mt-2 px-4 py-2 rounded-xl inline-block transition-all duration-500"
+            style={{
+              background: time === 0 ? "rgba(74,28,28,0.08)" : "rgba(74,28,28,0.05)",
+              color: "#4a1c1c",
+            }}
+          >
+            {message}
+          </p>
         )}
       </div>
 
@@ -77,7 +173,7 @@ const MeditationTimer = () => {
       {/* Controls */}
       <div className="flex justify-center gap-4">
         <button
-          onClick={() => setIsRunning(!isRunning)}
+          onClick={handleStartPause}
           className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
             isRunning
               ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300"

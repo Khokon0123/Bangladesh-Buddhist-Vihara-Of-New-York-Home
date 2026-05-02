@@ -3,8 +3,15 @@ import Link from "next/link";
 export default function AboutPage() {
   return (
     <main id="main-content" className="min-h-screen bg-white">
-      <section className="bg-gradient-to-br from-primary-dark via-primary to-primary-light py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "560px", display: "flex", alignItems: "center" }} className="py-20 sm:py-24 lg:py-32">
+        <img
+          src="/images/WhatsApp Image 2026-04-25 at 14.44.57.jpeg"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", zIndex: 0 }}
+        />
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.48)", zIndex: 1 }} />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8" style={{ position: "relative", zIndex: 2 }}>
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white mb-6">
               About Our Temple

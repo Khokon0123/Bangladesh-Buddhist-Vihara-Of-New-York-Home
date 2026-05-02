@@ -28,6 +28,23 @@ const VenerableCard = ({
   teachingFocus,
   imageUrl,
 }: VenerableCardProps) => {
+  const isPlaceholder = id.startsWith("venerable-placeholder");
+
+  if (isPlaceholder) {
+    return (
+      <div className="bg-white rounded-2xl overflow-hidden border-2 border-dashed border-neutral-200 flex flex-col items-center justify-center min-h-[420px] p-8 text-center">
+        <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
+          <svg className="w-7 h-7 text-neutral-300" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+        </div>
+        <p className="text-lg font-semibold text-neutral-300">Coming Soon</p>
+        <p className="text-sm text-neutral-300 mt-1">To be announced</p>
+      </div>
+    );
+  }
+
   return (
     <Link
       href={`/venerable-introduction/${id}`}
@@ -49,7 +66,6 @@ const VenerableCard = ({
         ) : (
           <PlaceholderAvatar name={name} />
         )}
-        {/* Subtle overlay on hover */}
         <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
       </div>
 
@@ -64,35 +80,18 @@ const VenerableCard = ({
 
         <div className="space-y-3 pt-3 border-t border-neutral-100">
           <div>
-            <p className="text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Lineage
-            </p>
-            <p className="text-sm text-neutral-700 leading-relaxed">
-              {lineage}
-            </p>
+            <p className="text-xs uppercase tracking-wider text-neutral-400 mb-1">Lineage</p>
+            <p className="text-sm text-neutral-700 leading-relaxed">{lineage}</p>
           </div>
-
           <div>
-            <p className="text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Teaching Focus
-            </p>
-            <p className="text-sm text-neutral-600 leading-relaxed">
-              {teachingFocus}
-            </p>
+            <p className="text-xs uppercase tracking-wider text-neutral-400 mb-1">Teaching Focus</p>
+            <p className="text-sm text-neutral-600 leading-relaxed">{teachingFocus}</p>
           </div>
         </div>
 
-        {/* Read More Indicator */}
         <div className="mt-6 pt-4 border-t border-neutral-100 flex items-center text-primary text-sm font-medium group-hover:gap-2 gap-1 transition-all duration-300">
           <span>Learn More</span>
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </div>

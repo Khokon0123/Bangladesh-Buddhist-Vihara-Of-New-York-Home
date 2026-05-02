@@ -319,22 +319,16 @@ export default function ResourcesPage() {
   return (
     <main id="main-content" className="min-h-screen bg-neutral-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-dark via-primary to-primary-light py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white mb-6">
-              Resources
-            </h1>
-            <p className="text-xl sm:text-2xl text-white/95 leading-relaxed">
-              Access PDFs, videos, and external resources to support your
-              Buddhist practice and learning journey
-            </p>
-          </div>
-        </div>
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "300px" }}>
+        <img
+          src="/images/Buddhist_Digital_Resource_Center_Logo.jpg"
+          alt="Buddhist Digital Resource Center"
+          style={{ width: "100%", height: "300px", objectFit: "cover", objectPosition: "center center", display: "block" }}
+        />
       </section>
 
       {/* Search and Filter Section */}
-      <section className="py-8 bg-white border-b border-neutral-200 sticky top-20 z-40 backdrop-blur-sm bg-white/95">
+      <section className="py-8 bg-white/95 border-b border-neutral-200 sticky top-20 z-40 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Search Bar */}
